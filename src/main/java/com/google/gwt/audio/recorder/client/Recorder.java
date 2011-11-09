@@ -15,18 +15,28 @@ import com.google.gwt.audio.recorder.client.event.SavePressedEvent;
 import com.google.gwt.audio.recorder.client.event.SaveProgressEvent;
 import com.google.gwt.audio.recorder.client.event.SavedEvent;
 import com.google.gwt.audio.recorder.client.event.SavingEventEvent;
-import com.google.gwt.audio.recorder.client.util.EventDispatcher;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.DOM;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.FormElement;
+import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 
-public class Recorder extends EventDispatcher {
+public class Recorder extends Composite {
 
 	private final static int DEFAULT_WIDTH = 24;
 	private final static int DEFAULT_HEIGHT = 24;
 	private final static String DEFAULT_APPLICATION_NAME = "RECORDER_APPLICATION";
 	private final static String SWF_OBJECT = GWT.getModuleBaseURL() + "recorder.swf";
+
+	private final static String FLASH_CONTAINER_ID = "RECORDER_FLASH_CONTAINER";
+	private final static String UPLOAD_FORM_ID = "RECORDER_UPLOAD_FORM";
+	private final static String UPLOAD_FIELD_NAME = "RECORDER_UPLOAD_FILE";
 
 	private JavaScriptObject flashRecorder;
 	private int recorderOriginalWidth = 0;
@@ -34,17 +44,40 @@ public class Recorder extends EventDispatcher {
 	private String uploadFormId = null;
 	private String uploadFieldName = null;
 
-	public Recorder(String containerId, ImageResource uploadImage) {
-		this(containerId, uploadImage.getSafeUri().asString());
+	private String uploadImage;
+
+	public Recorder(String uploadImage) {
+		this.uploadImage = uploadImage;
+		HTMLPanel mainContent = new HTMLPanel("");
+		// Flash container
+		DivElement flashContainer = Document.get().createDivElement();
+		flashContainer.setId(FLASH_CONTAINER_ID);
+		flashContainer.setInnerHTML("Your browser must have JavaScript enabled and the Adobe Flash Player installed.");
+		mainContent.getElement().appendChild(flashContainer);
+		// Form
+		FormElement form = Document.get().createFormElement();
+		form.setId(UPLOAD_FORM_ID);
+		InputElement fileInput = Document.get().createHiddenInputElement();
+		fileInput.setName(UPLOAD_FIELD_NAME + "[parent_id]");
+		fileInput.setValue("1");
+		InputElement formatInput = Document.get().createHiddenInputElement();
+		formatInput.setName("format");
+		formatInput.setValue("json");
+		form.appendChild(fileInput);
+		form.appendChild(formatInput);
+		mainContent.getElement().appendChild(form);
+		initWidget(mainContent);
 	}
 
-	public Recorder(String containerId, String uploadImage) {
+	@Override
+	protected void onAttach() {
+		super.onAttach();
 		this.loadFlashRecorder(DEFAULT_WIDTH, DEFAULT_HEIGHT, uploadImage, DEFAULT_APPLICATION_NAME, SWF_OBJECT,
-				containerId);
+				FLASH_CONTAINER_ID, UPLOAD_FORM_ID, UPLOAD_FIELD_NAME + "[filename]");
 	}
 
 	private native void loadFlashRecorder(int width, int height, String uploadImage, String applicationName,
-			String swfObject, String containerId) /*-{
+			String swfObject, String containerId, String uploadFormId, String uploadFieldname) /*-{
 		var instance = this;
 		// Event management
 		$wnd.microphone_recorder_events = function() {
@@ -54,8 +87,8 @@ public class Recorder extends EventDispatcher {
 				var width = parseInt(arguments[1]);
 				var height = parseInt(arguments[2]);
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onRecorderReady(II)(width, height);
-				instance.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId = "#recorderUploadForm";
-				instance.@com.google.gwt.audio.recorder.client.Recorder::uploadFieldName = "recorderUploadFile[filename]";
+				instance.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId = uploadFormId;
+				instance.@com.google.gwt.audio.recorder.client.Recorder::uploadFieldName = uploadFieldname;
 				instance.@com.google.gwt.audio.recorder.client.Recorder::connect(Ljava/lang/String;I)(applicationName, 0);
 				instance.@com.google.gwt.audio.recorder.client.Recorder::recorderOriginalWidth = width;
 				instance.@com.google.gwt.audio.recorder.client.Recorder::recorderOriginalHeight = height;
@@ -63,8 +96,7 @@ public class Recorder extends EventDispatcher {
 
 			case "no_microphone_found":
 				console.log("no_microphone_found");
-				instance
-						.@com.google.gwt.audio.recorder.client.Recorder::onNoMicrophoneFound();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::onNoMicrophoneFound()();
 				break;
 
 			case "microphone_user_request":
@@ -72,38 +104,34 @@ public class Recorder extends EventDispatcher {
 				instance
 						.@com.google.gwt.audio.recorder.client.Recorder::showPermissionWindow()
 						();
-				instance
-						.@com.google.gwt.audio.recorder.client.Recorder::onMicrophoneUserRequest();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::onMicrophoneUserRequest()();
 				break;
 
 			case "microphone_connected":
 				console.log("microphone_connected");
 				var mic = arguments[1];
-				instance
-						.@com.google.gwt.audio.recorder.client.Recorder::defaultSize();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::defaultSize()();
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onMicrophoneConnected(Ljava/lang/String;)(mic.name);
 				break;
 
 			case "microphone_not_connected":
 				console.log("microphone_not_connected");
-				instance
-						.@com.google.gwt.audio.recorder.client.Recorder::defaultSize();
-				instance
-						.@com.google.gwt.audio.recorder.client.Recorder::onMicrophoneNotConnected();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::defaultSize()();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::onMicrophoneNotConnected()();
 				break;
 
 			case "recording":
 				console.log("recording");
 				var name = arguments[1];
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onRecording(Ljava/lang/String;)(name);
-				instance.@com.google.gwt.audio.recorder.client.Recorder::hide();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::hide()();
 				break;
 
 			case "recording_stopped":
 				console.log("recording_stopped");
 				var name = arguments[1];
 				var duration = arguments[2];
-				instance.@com.google.gwt.audio.recorder.client.Recorder::show();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::show()();
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onRecordingStop(Ljava/lang/String;I)(name, duration);
 				break;
 
@@ -128,10 +156,8 @@ public class Recorder extends EventDispatcher {
 
 			case "save_pressed":
 				console.log("save_pressed");
-				instance
-						.@com.google.gwt.audio.recorder.client.Recorder::updateForm();
-				instance
-						.@com.google.gwt.audio.recorder.client.Recorder::onSavePressed();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::updateForm()();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::onSavePressed()();
 				break;
 
 			case "saving":
@@ -182,10 +208,6 @@ public class Recorder extends EventDispatcher {
 		console.log("recorder.swf embedded");
 
 	}-*/;
-
-	private void _connect(String applicationName, Integer attempts) {
-		this.flashRecorder = DOM.getElementById(applicationName);
-	}
 
 	private native void connect(String applicationName, int attempts) /*-{
 		var instance = this;
@@ -332,4 +354,20 @@ public class Recorder extends EventDispatcher {
 	private void onSaving(String name) {
 		this.fireEvent(new SavingEventEvent(name));
 	}
+
+	/**
+	 * Adds this handler to the widget.
+	 * 
+	 * @param <H>
+	 *            the type of handler to add
+	 * @param type
+	 *            the event type
+	 * @param handler
+	 *            the handler
+	 * @return {@link HandlerRegistration} used to remove the handler
+	 */
+	public final <H extends EventHandler> HandlerRegistration addHandler(GwtEvent.Type<H> type, final H handler) {
+		return this.addHandler(handler, type);
+	}
+
 }

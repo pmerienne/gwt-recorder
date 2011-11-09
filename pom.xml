@@ -21,7 +21,7 @@
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<!-- GWT version -->
-		<gwt.version>2.4.0</gwt.version>
+		<gwt.version>2.3.0</gwt.version>
 	</properties>
 
 	<dependencies>
