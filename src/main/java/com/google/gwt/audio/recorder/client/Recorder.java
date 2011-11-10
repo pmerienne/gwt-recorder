@@ -14,7 +14,7 @@ import com.google.gwt.audio.recorder.client.event.SaveFailedEvent;
 import com.google.gwt.audio.recorder.client.event.SavePressedEvent;
 import com.google.gwt.audio.recorder.client.event.SaveProgressEvent;
 import com.google.gwt.audio.recorder.client.event.SavedEvent;
-import com.google.gwt.audio.recorder.client.event.SavingEventEvent;
+import com.google.gwt.audio.recorder.client.event.SavingEvent;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.DivElement;
@@ -24,6 +24,7 @@ import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 
@@ -49,6 +50,7 @@ public class Recorder extends Composite {
 
 	private FormElement form;
 
+	@UiConstructor
 	public Recorder(String uploadImage) {
 		this.uploadImage = uploadImage;
 		HTMLPanel mainContent = new HTMLPanel("");
@@ -430,7 +432,7 @@ public class Recorder extends Composite {
 	}
 
 	private void onSaving(String name) {
-		this.fireEvent(new SavingEventEvent(name));
+		this.fireEvent(new SavingEvent(name));
 	}
 
 	/**

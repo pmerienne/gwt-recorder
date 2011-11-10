@@ -1,0 +1,28 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:r="urn:import:com.google.gwt.audio.recorder.client.widget">
+	<ui:style>
+		.uploadContainer {
+			margin-right: 5px;
+			margin-left: 5px;
+		}
+		
+		.status {
+			margin-right: 5px;
+		}
+	</ui:style>
+
+	<ui:with type="com.google.gwt.audio.recorder.client.resource.ResourceBundle"
+		field="res" />
+
+	<g:HTMLPanel>
+		<g:HorizontalPanel>
+			<r:IconButton ui:field='recordButton' enabled="false"
+				upImage="{res.record}" disabledImage="{res.recordDisabled}" />
+			<r:IconButton ui:field='playbackButton' enabled="false"
+				upImage="{res.play}" disabledImage="{res.playDisabled}" />
+			<g:Label ui:field="status" addStyleNames="{style.status}" />
+			<g:HTMLPanel ui:field="uploadContainer" addStyleNames="{style.status}" />
+		</g:HorizontalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 
