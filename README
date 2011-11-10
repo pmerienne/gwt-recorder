@@ -4,12 +4,11 @@ GWT audio recorder.
 Usage : 
 
 // Create recorder (save button)
-final Recorder recorder = new Recorder("http://www.stasaph-local.co.uk/resources/upload-icon%5B1%5D.jpg");
-RootPanel.get().add(recorder);
+final Recorder recorder = new Recorder("images/upload.png");
+recorder.setUploadURL("upload.php");
 
 // Create UI
 final Label recorderStatus = new Label("Recorder status");
-RootPanel.get().add(recorderStatus);
 
 final Button recordButton = new Button("Record");
 recordButton.addClickHandler(new ClickHandler() {
@@ -19,7 +18,6 @@ recordButton.addClickHandler(new ClickHandler() {
 	}
 });
 recordButton.setEnabled(false);
-RootPanel.get().add(recordButton);
 
 final Button playButton = new Button("Play");
 playButton.addClickHandler(new ClickHandler() {
@@ -29,13 +27,16 @@ playButton.addClickHandler(new ClickHandler() {
 	}
 });
 playButton.setEnabled(false);
-RootPanel.get().add(playButton);
 
-final Label uploadStatus = new Label("Upload status");
+final Label uploadStatus = new Label("");
+
+RootPanel.get().add(recorderStatus);
+RootPanel.get().add(recordButton);
+RootPanel.get().add(playButton);
+RootPanel.get().add(recorder);
 RootPanel.get().add(uploadStatus);
 
-
-// Handling event
+// Manage recorder events
 recorder.addHandler(RecorderReadyEvent.getType(), new RecorderReadyHandler() {
 	@Override
 	public void onRecorderReady(RecorderReadyEvent event) {
@@ -63,7 +64,8 @@ recorder.addHandler(RecordingEvent.getType(), new RecordingHandler() {
 recorder.addHandler(RecordingStoppedEvent.getType(), new RecordingStoppedHandler() {
 	@Override
 	public void onRecordingStopped(RecordingStoppedEvent event) {
-		recorderStatus.setText("Recorded " + event.getName() + ", duration : " + event.getDuration() + " seconds");
+		recorderStatus.setText("Recorded " + event.getName() + ", duration : " + event.getDuration()
+				+ " seconds");
 		recordButton.setText("Record");
 		playButton.setEnabled(true);
 	}
@@ -97,7 +99,7 @@ recorder.addHandler(SavedEvent.getType(), new SavedHandler() {
 recorder.addHandler(SaveFailedEvent.getType(), new SaveFailedHandler() {
 	@Override
 	public void onSaveFailed(SaveFailedEvent event) {
-		uploadStatus.setText("Save fail for " + event.getName());
+		uploadStatus.setText("Save fail for " + event.getName() + " : " + event.getError());
 	}
 });
 

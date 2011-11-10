@@ -39,12 +39,15 @@ public class Recorder extends Composite {
 	private final static String UPLOAD_FIELD_NAME = "RECORDER_UPLOAD_FILE";
 
 	private JavaScriptObject flashRecorder;
-	private int recorderOriginalWidth = 0;
-	private int recorderOriginalHeight = 0;
-	private String uploadFormId = null;
-	private String uploadFieldName = null;
+	private int recorderOriginalWidth = DEFAULT_WIDTH;
+	private int recorderOriginalHeight = DEFAULT_HEIGHT;
+	private String uploadFormId = UPLOAD_FORM_ID;
+	private String uploadFieldName = UPLOAD_FIELD_NAME + "[filename]";
 
 	private String uploadImage;
+	private String uploadURL;
+
+	private FormElement form;
 
 	public Recorder(String uploadImage) {
 		this.uploadImage = uploadImage;
@@ -55,8 +58,9 @@ public class Recorder extends Composite {
 		flashContainer.setInnerHTML("Your browser must have JavaScript enabled and the Adobe Flash Player installed.");
 		mainContent.getElement().appendChild(flashContainer);
 		// Form
-		FormElement form = Document.get().createFormElement();
+		form = Document.get().createFormElement();
 		form.setId(UPLOAD_FORM_ID);
+		form.setName(UPLOAD_FORM_ID);
 		InputElement fileInput = Document.get().createHiddenInputElement();
 		fileInput.setName(UPLOAD_FIELD_NAME + "[parent_id]");
 		fileInput.setValue("1");
@@ -73,7 +77,7 @@ public class Recorder extends Composite {
 	protected void onAttach() {
 		super.onAttach();
 		this.loadFlashRecorder(DEFAULT_WIDTH, DEFAULT_HEIGHT, uploadImage, DEFAULT_APPLICATION_NAME, SWF_OBJECT,
-				FLASH_CONTAINER_ID, UPLOAD_FORM_ID, UPLOAD_FIELD_NAME + "[filename]");
+				FLASH_CONTAINER_ID, UPLOAD_FORM_ID, UPLOAD_FIELD_NAME);
 	}
 
 	private native void loadFlashRecorder(int width, int height, String uploadImage, String applicationName,
@@ -87,11 +91,7 @@ public class Recorder extends Composite {
 				var width = parseInt(arguments[1]);
 				var height = parseInt(arguments[2]);
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onRecorderReady(II)(width, height);
-				instance.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId = uploadFormId;
-				instance.@com.google.gwt.audio.recorder.client.Recorder::uploadFieldName = uploadFieldname;
 				instance.@com.google.gwt.audio.recorder.client.Recorder::connect(Ljava/lang/String;I)(applicationName, 0);
-				instance.@com.google.gwt.audio.recorder.client.Recorder::recorderOriginalWidth = width;
-				instance.@com.google.gwt.audio.recorder.client.Recorder::recorderOriginalHeight = height;
 				break;
 
 			case "no_microphone_found":
@@ -131,7 +131,8 @@ public class Recorder extends Composite {
 				console.log("recording_stopped");
 				var name = arguments[1];
 				var duration = arguments[2];
-				instance.@com.google.gwt.audio.recorder.client.Recorder::show()();
+				instance.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
+						.show();
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onRecordingStop(Ljava/lang/String;I)(name, duration);
 				break;
 
@@ -228,12 +229,16 @@ public class Recorder extends Composite {
 			this.@com.google.gwt.audio.recorder.client.Recorder::recorderOriginalWidth = this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder.width;
 			this.@com.google.gwt.audio.recorder.client.Recorder::recorderOriginalHeight = this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder.height;
 			if (this.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId) {
-				var frm = document[this.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId];
+				var frm;
+				if (navigator.appName.indexOf("Microsoft") != -1) {
+					frm = $wnd.window[this.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId];
+				} else {
+					frm = $wnd.document[this.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId];
+				}
 				this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
 						.init(
-								frm.attr('action').toString(),
-								this.@com.google.gwt.audio.recorder.client.Recorder::uploadFieldName,
-								frm.serializeArray());
+								frm.getAttribute('action'),
+								this.@com.google.gwt.audio.recorder.client.Recorder::uploadFieldName);
 			}
 			return;
 		}
@@ -268,22 +273,53 @@ public class Recorder extends Composite {
 						this.@com.google.gwt.audio.recorder.client.Recorder::recorderOriginalHeight);
 	}-*/;
 
+	/**
+	 * show the save button
+	 */
 	public native void show() /*-{
 		this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
 				.show();
 	}-*/;
 
+	/**
+	 * hide the save button
+	 */
 	public native void hide() /*-{
 		this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
 				.hide();
 	}-*/;
 
+	/**
+	 * update the form data
+	 */
 	public native void updateForm() /*-{
-		var frm = document[this.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId];
+		var frm;
+		if (navigator.appName.indexOf("Microsoft") != -1) {
+			frm = $wnd.window[this.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId];
+		} else {
+			frm = $wnd.document[this.@com.google.gwt.audio.recorder.client.Recorder::uploadFormId];
+		}
 		this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
-				.update(frm.serializeArray());
+				.update();
 	}-*/;
 
+	/**
+	 * returns the duration of the recording
+	 * 
+	 * @param name
+	 *            name of the recording
+	 * @return
+	 */
+	public native int getDuration(String name) /*-{
+		return this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
+				.duration(name);
+	}-*/;
+
+	/**
+	 * show the permissions dialog for microphone access, make sure the flash
+	 * application is large enough for the dialog box before calling this
+	 * method. Must be at least 240x160.
+	 */
 	public native void showPermissionWindow() /*-{
 		var instance = this;
 		this.@com.google.gwt.audio.recorder.client.Recorder::resize(II)(240, 160);
@@ -293,6 +329,48 @@ public class Recorder extends Composite {
 					instance.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
 							.permit();
 				}, 1);
+	}-*/;
+
+	/**
+	 * Configures microphone settings
+	 * 
+	 * @param rate
+	 *            at which the microphone captures sound, in kHz. default is 22.
+	 *            Currently we only support 44 and 22.
+	 * @param gain
+	 *            the amount by which the microphone should multiply the signal
+	 *            before transmitting it. default is 100
+	 * @param silenceLevel
+	 *            amount of sound required to activate the microphone and
+	 *            dispatch the activity event. default is 0
+	 * @param silenceTimeout
+	 *            number of milliseconds between the time the microphone stops
+	 *            detecting sound and the time the activity event is dispatched.
+	 *            default is 4000
+	 */
+	public native void configure(int rate, int gain, int silenceLevel, int silenceTimeout) /*-{
+		this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
+				.configure(rate, gain, silenceLevel, silenceTimeout);
+	}-*/;
+
+	/**
+	 * use echo suppression
+	 * 
+	 * @param use
+	 */
+	private native void setUseEchoSuppression(boolean use) /*-{
+		this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
+				.setUseEchoSuppression(value);
+	}-*/;
+
+	/**
+	 * routes audio captured by a microphone to the local speakers
+	 * 
+	 * @param loopBack
+	 */
+	private native void setLoopBack(boolean loopBack) /*-{
+		this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder
+				.setLoopBack(value);
 	}-*/;
 
 	private void onRecorderReady(int width, int height) {
@@ -368,6 +446,15 @@ public class Recorder extends Composite {
 	 */
 	public final <H extends EventHandler> HandlerRegistration addHandler(GwtEvent.Type<H> type, final H handler) {
 		return this.addHandler(handler, type);
+	}
+
+	public String getUploadURL() {
+		return uploadURL;
+	}
+
+	public void setUploadURL(String uploadURL) {
+		this.uploadURL = uploadURL;
+		this.form.setAction(this.uploadURL);
 	}
 
 }
