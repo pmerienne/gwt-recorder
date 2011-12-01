@@ -6,8 +6,8 @@ The save button must be clicked inside the flash application, see Upload and dow
 Maven repository : 
 
 <repository>
-	<id>pmerienne-common-util</id>
-	<name>Pierre Merienne Commo-util repo</name>
+	<id>gwt-recorder</id>
+	<name>gwt-recorder repo</name>
 	<url>http://github.com/pmerienne/gwt-recorder/raw/master/releases</url>
 </repository>
 
