@@ -3,6 +3,8 @@ Use flash to record audio data from a microphone. Converts the audio data to a W
 The WAV file is Posted as a multipart form-data request. Additional fields can be added to the request.
 The save button must be clicked inside the flash application, see Upload and download require user interaction for more information.
 
+Demo : http://audio-recorder-showcase.cloudfoundry.com/
+
 Maven repository : 
 
 <repository>
