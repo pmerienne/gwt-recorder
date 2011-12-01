@@ -82,14 +82,14 @@ public class RecorderControl extends Composite implements MicrophoneConnectedHan
 	@UiHandler("playbackButton")
 	protected void onPlaybackClicked(ClickEvent event) {
 		if (this.recorder != null) {
-			this.recorder.playBack("audio");
+			this.recorder.play();
 		}
 	}
 
 	@UiHandler("recordButton")
 	protected void onRecordClicked(ClickEvent event) {
 		if (this.recorder != null) {
-			this.recorder.record("audio", "audio.wav");
+			this.recorder.record();
 		}
 	}
 
@@ -214,4 +214,11 @@ public class RecorderControl extends Composite implements MicrophoneConnectedHan
 		// TODO Auto-generated method stub
 	}
 
+	public IconButton getPlaybackButton() {
+		return playbackButton;
+	}
+
+	public IconButton getRecordButton() {
+		return recordButton;
+	}
 }

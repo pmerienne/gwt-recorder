@@ -21,8 +21,8 @@
 				upImage="{res.record}" disabledImage="{res.recordDisabled}" />
 			<r:IconButton ui:field='playbackButton' enabled="false"
 				upImage="{res.play}" disabledImage="{res.playDisabled}" />
-			<g:Label ui:field="status" addStyleNames="{style.status}" />
 			<g:HTMLPanel ui:field="uploadContainer" addStyleNames="{style.status}" />
 		</g:HorizontalPanel>
+		<g:Label ui:field="status" addStyleNames="{style.status}" />
 	</g:HTMLPanel>
 </ui:UiBinder> 
