@@ -23,6 +23,7 @@ See http://audio-recorder-showcase.cloudfoundry.com/
 
 ## Usage 
 
+ ```java
 // Create simple UI
 RecorderControl recorderControl = new RecorderControl();
 RootPanel.get().add(recorderControl);
@@ -30,3 +31,4 @@ RootPanel.get().add(recorderControl);
 Recorder recorder = new Recorder("images/upload.png");
 recorder.setUploadURL(GWT.getModuleBaseURL() + "file");
 recorderControl.setRecorder(recorder);
+ ```
