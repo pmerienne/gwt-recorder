@@ -85,7 +85,6 @@ public class Recorder extends Composite {
 		var instance = this;
 		// Event management
 		$wnd.microphone_recorder_events = function() {
-			console.log("Event : " + arguments[0]);
 			switch (arguments[0]) {
 			case "ready":
 				var width = parseInt(arguments[1]);
@@ -105,7 +104,6 @@ public class Recorder extends Composite {
 
 			case "microphone_connected":
 				var mic = arguments[1];
-				console.log("Microphone connected : " + mic);
 				instance.@com.google.gwt.audio.recorder.client.Recorder::defaultSize()();
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onMicrophoneConnected(Ljava/lang/String;)(mic.name);
 				break;
@@ -117,7 +115,6 @@ public class Recorder extends Composite {
 
 			case "recording":
 				var name = arguments[1];
-				console.log("Recording " + name);
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onRecording(Ljava/lang/String;)(name);
 				instance.@com.google.gwt.audio.recorder.client.Recorder::hide()();
 				break;
@@ -125,14 +122,12 @@ public class Recorder extends Composite {
 			case "recording_stopped":
 				var name = arguments[1];
 				var duration = arguments[2];
-				console.log("Recording of " + name + "(" + duration + " seconds)" + " stopped");
 				instance.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder.show();
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onRecordingStop(Ljava/lang/String;I)(name, duration);
 				break;
 
 			case "playing":
 				var name = arguments[1];
-				console.log("Playing " + name);
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onPlaying(Ljava/lang/String;)(name);
 				break;
 
@@ -144,7 +139,6 @@ public class Recorder extends Composite {
 
 			case "stopped":
 				var name = arguments[1];
-				console.log("Stop playing " + name);
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onPlaybackStopped(Ljava/lang/String;)(name);
 				break;
 
@@ -155,13 +149,11 @@ public class Recorder extends Composite {
 
 			case "saving":
 				var name = arguments[1];
-				console.log("Saving " + name);
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onSaving(Ljava/lang/String;)(name);
 				break;
 
 			case "saved":
 				var name = arguments[1];
-				console.log(name + " saved");
 				//				var data = $.parseJSON(arguments[2]);
 				//				if (data.saved) {
 				instance.@com.google.gwt.audio.recorder.client.Recorder::onSaved(Ljava/lang/String;)(name);
@@ -170,21 +162,11 @@ public class Recorder extends Composite {
 			case "save_failed":
 				var name = arguments[1];
 				var errorMessage = arguments[2];
-				console.log(name + " save failed : " + errorMessage);
-				instance.@com.google.gwt.audio.recorder.client.Recorder::onSaveFailed(Ljava/lang/String;Ljava/lang/String;)(name, errorMessage);
-				break;
-
-			case "save_progress":
-				var name = arguments[1];
-				var bytesLoaded = arguments[2];
-				var bytesTotal = arguments[3];
-				console.log("Saving " + name + " : " + 100*bytesLoaded/bytesTotal + "%");
-				instance.@com.google.gwt.audio.recorder.client.Recorder::onSaveProgress(II)(bytesLoaded, bytesTotal);
+				// instance.@com.google.gwt.audio.recorder.client.Recorder::onSaveProgress(II)(bytesLoaded, bytesTotal);
 				break;
 			}
 		}
 
-		console.log("Load recorder.swf");
 		var appWidth = width;
 		var appHeight = height;
 		var flashvars = {
@@ -197,8 +179,6 @@ public class Recorder extends Composite {
 			'name' : applicationName
 		};
 		$wnd.swfobject.embedSWF(swfObject, containerId, appWidth, appHeight, "10.1.0", "", flashvars, params, attributes);
-		console.log("recorder.swf embedded");
-
 	}-*/;
 
 	private native void connect(String applicationName, int attempts) /*-{
@@ -286,7 +266,6 @@ public class Recorder extends Composite {
 		// var data = new Object;
 		// data.name = "id";
 		// data.value = this.@com.google.gwt.audio.recorder.client.Recorder::filename;
-		// console.log(JSON.stringify(data));
 		// this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder.update(JSON.stringify(data));
 
 		this.@com.google.gwt.audio.recorder.client.Recorder::flashRecorder.update();
