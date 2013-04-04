@@ -1,11 +1,13 @@
-GWT audio recorder library.
+# GWT audio recorder library.
+
 Use flash to record audio data from a microphone. Converts the audio data to a WAV file. Uploads the WAV file to the server.
 The WAV file is Posted as a multipart form-data request. Additional fields can be added to the request.
 The save button must be clicked inside the flash application, see Upload and download require user interaction for more information.
 
-Demo : http://audio-recorder-showcase.cloudfoundry.com/
+## Demo
+See http://audio-recorder-showcase.cloudfoundry.com/
 
-Maven repository : 
+## Maven integration : 
 
 <repository>
 	<id>gwt-recorder</id>
@@ -13,15 +15,13 @@ Maven repository :
 	<url>http://github.com/pmerienne/gwt-recorder/raw/master/releases</url>
 </repository>
 
-Maven dependency : 
-
 <dependency>
 	<groupId>com.google.gwt</groupId>
 	<artifactId>audio-recorder</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 </dependency>
 
-Usage : 
+## Usage 
 
 // Create simple UI
 RecorderControl recorderControl = new RecorderControl();
