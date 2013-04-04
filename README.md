@@ -9,6 +9,7 @@ See http://audio-recorder-showcase.cloudfoundry.com/
 
 ## Maven integration : 
 
+ ```xml
 <repository>
 	<id>gwt-recorder</id>
 	<name>gwt-recorder repo</name>
@@ -20,7 +21,8 @@ See http://audio-recorder-showcase.cloudfoundry.com/
 	<artifactId>audio-recorder</artifactId>
 	<version>0.0.2</version>
 </dependency>
-
+ ```
+ 
 ## Usage 
 
  ```java
