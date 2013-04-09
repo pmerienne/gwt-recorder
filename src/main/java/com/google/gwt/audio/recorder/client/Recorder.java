@@ -162,7 +162,7 @@ public class Recorder extends Composite {
 			case "save_failed":
 				var name = arguments[1];
 				var errorMessage = arguments[2];
-				// instance.@com.google.gwt.audio.recorder.client.Recorder::onSaveProgress(II)(bytesLoaded, bytesTotal);
+				instance.@com.google.gwt.audio.recorder.client.Recorder::onSaveFailed(Ljava/lang/String;Ljava/lang/String;)(name, errorMessage);
 				break;
 			}
 		}
