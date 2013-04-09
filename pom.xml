@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.google.gwt</groupId>
 	<artifactId>audio-recorder</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4-SNAPSHOT</version>
 
 	<name>gwt-recorder</name>
 	<description>GWT audio recorder</description>
