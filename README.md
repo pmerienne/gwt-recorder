@@ -19,7 +19,7 @@ See http://audio-recorder-showcase.cloudfoundry.com/
 <dependency>
 	<groupId>com.google.gwt</groupId>
 	<artifactId>audio-recorder</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 </dependency>
  ```
  
